@@ -16,31 +16,34 @@ export default class Layout extends React.Component{
           return all;
     },[]);
 
-    var width = 420,
-    barHeight = 20;
+    //Width and height
+    var w = 500;
+    var h = 100;
+    var barPadding = 1;
 
-    var x = d3.scale.linear()
-    .domain([0, d3.max(data)])
-    .range([0, width]);
+    //Create SVG element
+    var svg = d3.select("body")
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h);
 
-    var chart = d3.select(".chart")
-    .attr("width", width)
-    .attr("height", barHeight * data.length);
-
-    var bar = chart.selectAll("g")
-    .data(data)
-    .enter().append("g")
-    .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
-
-    bar.append("rect")
-    .attr("width", x)
-    .attr("height", barHeight - 1);
-
-    bar.append("text")
-    .attr("x", function(d) { return x(d) - 3; })
-    .attr("y", barHeight / 2)
-    .attr("dy", ".35em")
-    .text(function(d) { return d; });
+    svg.selectAll("rect")
+               .data(data)
+               .enter()
+               .append("rect")
+               .attr("x", 0)
+               .attr("y", 0)
+               .attr("width", 20)
+               .attr("height", 100)
+.attr("x", function(d, i) {
+    return i * (w / data.length);
+})
+.attr("height", function(d) {
+    return d * 4;  // <-- Times four!
+})
+.attr("y", function(d) {
+    return h - d;  //Height minus data value
+});
 
       this.setState({
         id: result.id
@@ -53,9 +56,9 @@ export default class Layout extends React.Component{
     render(){
 
         return(
-            <svg className="chart">
+            <div className="chart">
 
-            </svg>
+            </div>
         );
     }
 }
