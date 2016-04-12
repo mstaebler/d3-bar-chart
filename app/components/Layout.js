@@ -11,39 +11,57 @@ export default class Layout extends React.Component{
     componentDidMount() {
     this.serverRequest = $.get(this.props.source, function (res) {
       var result = JSON.parse(res);
-      var data = result.data.reduce(function(all,item,index){
+      var dataset = result.data.reduce(function(all,item,index){
           all.push(item[1]);
           return all;
     },[]);
 
     //Width and height
-    var w = 500;
-    var h = 100;
+    var w = 1200;
+    var h = 900;
     var barPadding = 1;
 
     //Create SVG element
-    var svg = d3.select("body")
-                .append("svg")
-                .attr("width", w)
-                .attr("height", h);
+    var svg = d3.select("span")
+    .append("svg")
+    .attr("width", w)
+    .attr("height", h);
 
     svg.selectAll("rect")
-               .data(data)
-               .enter()
-               .append("rect")
-               .attr("x", 0)
-               .attr("y", 0)
-               .attr("width", 20)
-               .attr("height", 100)
-.attr("x", function(d, i) {
-    return i * (w / data.length);
-})
-.attr("height", function(d) {
-    return d * 4;  // <-- Times four!
-})
-.attr("y", function(d) {
-    return h - d;  //Height minus data value
-});
+    .data(dataset)
+    .enter()
+    .append("rect")
+    .attr("x", function(d, i) {
+        return i * (w / dataset.length);
+    })
+    .attr("y", function(d) {
+        return h - d;
+    })
+    .attr("width", w / dataset.length - barPadding)
+    .attr("height", function(d) {
+        return d;
+    })
+    .attr("fill", function(d) {
+        return "rgb(0, 0, " + (d * 10) + ")";
+    });
+
+    svg.selectAll("text")
+   .data(dataset)
+   .enter()
+   .append("text")
+   .text(function(d) {
+        return d;
+   })
+   .attr("x", function(d, i) {
+        return i * (w / dataset.length) + 5;  // +5
+   })
+   .attr("y", function(d) {
+        return h - (d) + 15;              // +15
+   })
+   .attr("font-family", "sans-serif")
+   .attr("font-size", "11px")
+   .attr("fill", "white")
+   .attr("text-anchor", "middle");
 
       this.setState({
         id: result.id
@@ -56,9 +74,9 @@ export default class Layout extends React.Component{
     render(){
 
         return(
-            <div className="chart">
+            <span className="chart">
 
-            </div>
+            </span>
         );
     }
 }
